@@ -11,28 +11,31 @@ import { styled, Tooltip, tooltipClasses } from "@mui/material"
 export function WelcomePage(){
   const [quizState, dispatch] = useContext(QuizContext)
   const [history, setHistory] = useState(false)
-  const [infoFetch, setInfoFetch] = useState(false)
+  const [infoFetched, setInfoFetched] = useState(false)
   const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
-
-  !infoFetch && setInfoFetch(true)
 
   useEffect(() => {
     const getQuizes = async () => {
       const response = await axios.get(import.meta.env.VITE_API + "/quiz/all", {headers: {Authorization: `Bearer ${cookies.userToken}`}}).catch((err) => {
-        setInfoFetch(false)
-        return false
+        setInfoFetched(false)
       })
-      
-      dispatch({type: "UPDATE_QUIZES", payload: {quizes: response.data}})
+          
+      if(response) {
+        setInfoFetched(true)
+        dispatch({type: "UPDATE_QUIZES", payload: {quizes: response.data}})
+      }
     }
 
     const getUserInfo = async () => {
       const response = await axios.get(import.meta.env.VITE_API + "/user", {headers: {Authorization: `Bearer ${cookies.userToken}`}}).catch((err) => {
-        setInfoFetch(false)
+        removeCookie()
+        dispatch({type: "USER_AUTH"})
         return false
       })
 
-      dispatch({type: "SET_USER_INFO", payload: {userInfo: response.data}})
+      if(response){
+        dispatch({type: "SET_USER_INFO", payload: {userInfo: response.data}})
+      }
     }
 
     getUserInfo()
@@ -53,10 +56,32 @@ export function WelcomePage(){
     },
   }));
 
+  const callQuizes = () => {
+    try{
+      if(infoFetched && quizState.subjects.length > 0){
+        return quizState.subjects.map((subject, index) => {          
+          return (<QuizOption key={index} creator={[subject.creatorId]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => dispatch({type: "SELECT_QUESTION_AND_SORT", payload: {index}})}/>)
+        })
+      }
+    }catch(err) {
+      console.log("Erro");           
+    }
+  }
+
+  const callEmptyScreen = () => {
+    try{
+      if(infoFetched && quizState.subjects.length === 0){
+        return (<Empty />)
+      }
+    }catch(err){
+      console.log("Error"); 
+    }
+  }
+
   return (
     <div className="py-[2rem] md:py-10">
 
-      {quizState.subjects.length === 0 && <Empty />}
+      {callEmptyScreen()}
 
       <HistoryPage hidden={history} setHidden={() => setHistory(false)}/>
 
@@ -70,10 +95,17 @@ export function WelcomePage(){
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-3 grid-rows-5">
 
+        {!infoFetched && (
+        <> 
+          <div className="border-[0.7px] border-zinc-200 rounded-[0.5rem] p-3 px-4 w-full bg-zinc-100 h-28 animate-pulse hover:border-zinc-600 ${creatorsWidget && 'border-zinc-600'} transition-all cursor-pointer"></div>
+          <div className="border-[0.7px] border-zinc-200 rounded-[0.5rem] p-3 px-4 w-full bg-zinc-100 h-28 animate-pulse hover:border-zinc-600 ${creatorsWidget && 'border-zinc-600'} transition-all cursor-pointer"></div>
+          <div className="border-[0.7px] border-zinc-200 rounded-[0.5rem] p-3 px-4 w-full bg-zinc-100 h-28 animate-pulse hover:border-zinc-600 ${creatorsWidget && 'border-zinc-600'} transition-all cursor-pointer"></div>
+          <div className="border-[0.7px] border-zinc-200 rounded-[0.5rem] p-3 px-4 w-full bg-zinc-100 h-28 animate-pulse hover:border-zinc-600 ${creatorsWidget && 'border-zinc-600'} transition-all cursor-pointer"></div>
+        </>
+        )}
+
         {
-          quizState.subjects.map((subject, index) => {
-            return (<QuizOption key={index} creator={[subject.creatorId]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => dispatch({type: "SELECT_QUESTION_AND_SORT", payload: {index}})}/>)
-          })
+          callQuizes()
         }
 
       </div>
