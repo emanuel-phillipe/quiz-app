@@ -1,10 +1,11 @@
 import { createContext, useReducer } from "react";
 
-const stages = ["Start", "Playing", "End", "Incorrects", "Creation", "QuestionCreation"];
+const stages = ["Start", "Playing", "End", "Incorrects", "Creation", "QuestionCreation", "Auth"];
 
 const initialState = {
-  gameStage: stages[0],
+  gameStage: stages[6],
   subjects: [],
+  userInfo: {},
   questions: [],
   currentQuestion: 0,
   score: 0,
@@ -17,6 +18,24 @@ const initialState = {
 const quizReducer = (state, action) => {
 
   switch(action.type) {
+    case "SET_USER_INFO":
+      var userName = action.payload.userInfo.fullName
+      var splitedName = userName.split(" ")
+
+      return {
+        ...state,
+        userInfo: {...action.payload.userInfo, smallName: splitedName[0] +  " " + splitedName[1]}
+      }
+    case "HOME_PAGE":
+      return {
+        ...state,
+        gameStage: stages[0]
+      }
+    case "USER_AUTH":      
+      return {
+        ...state,
+        gameStage: stages[6]
+      }
     case "UPDATE_QUIZES":
       var quizes = action.payload.quizes
 

@@ -4,11 +4,11 @@ import { isMobile } from "react-device-detect";
 
 export function CreateQuestionPage({saveQuestion, autoQuestion, cancelQuestion}) {
   const placeholder =
-    "Aliquam gravida dui tincidunt ligula hendrerit, sed luctus ipsum egestas. Etiam et dui lacus. Sed in varius nisl, at tincidunt neque. Ut risus massa, efficitur ut diam sit amet, hendrerit vulputate est. Sed sodales justo in lorem posuere pharetra. Aliquam pellentesque egestas nunc a tincidunt. Aenean rutrum quis tellus ac auctor. Donec tempus varius lorem eget aliquet. Aliquam malesuada tempus semper.";
+    "O que caracteriza o movimento modernista no Brasil?";
 
   const [quizState, dispatch] = useContext(QuizContext);
   const [questionInfo, setQuestionInfo] = useState({
-    question: "",
+    header: "",
     options: [],
     answer: "",
     descriptions: [],
@@ -20,14 +20,14 @@ export function CreateQuestionPage({saveQuestion, autoQuestion, cancelQuestion})
   const [autoQuestionRegistered, setAutoQuestionRegistered] = useState(false)
 
   if(autoQuestion && !autoQuestionRegistered){
-    setQuestionInfo({question: autoQuestion.statement, options: autoQuestion.options, answer: autoQuestion.answer, descriptions: [], latex: false})
+    setQuestionInfo({header: autoQuestion.header, options: autoQuestion.options, answer: autoQuestion.answer, descriptions: [], latex: false})
     setAutoQuestionRegistered(true)
   }
 
   useEffect(() => {
     var able = false
 
-    if(questionInfo.question != "" && questionInfo.options != [] && questionInfo.answer != ""){
+    if(questionInfo.header != "" && questionInfo.options != [] && questionInfo.answer != ""){
       able = true
     }
     
@@ -142,10 +142,10 @@ export function CreateQuestionPage({saveQuestion, autoQuestion, cancelQuestion})
       <textarea
         onChange={(e) =>
           setQuestionInfo((current) => {
-            return { ...current, question: e.target.value };
+            return { ...current, header: e.target.value };
           })
         }
-        value={questionInfo.question}
+        value={questionInfo.header}
         className="w-full text-justify outline-none"
         rows={3}
         placeholder={placeholder}

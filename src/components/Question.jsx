@@ -126,13 +126,13 @@ export const Question = () => {
 
         </div>
           <div>
-            <button onClick={() => dispatch({type: "NEW_GAME"})} className="p-2 px-4 border-[0.7px] w-full rounded-lg border-zinc-300 text-zinc-600 hover:border-zinc-500 hover:text-zinc-800 font-medium transition-all">Desistir</button>
+            <button onClick={() => dispatch({type: "HOME_PAGE"})} className="p-2 px-4 border-[0.7px] w-full rounded-lg border-zinc-300 text-zinc-600 hover:border-zinc-500 hover:text-zinc-800 font-medium transition-all">Desistir</button>
           </div>
       </div>
 
       <div className="mt-3 text-justify text-zinc-800 text-[1rem]">
         <Latex colorIsTextColor={true}>
-          {currentQuestion.question}
+          {currentQuestion.header}
         </Latex>
 
       </div>

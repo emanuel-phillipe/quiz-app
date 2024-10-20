@@ -42,8 +42,7 @@ function QuizOption({title, desc, creator, questionNumber, click, subject}) {
   }  
 
   return (
-      <div onClick={() => {handleClick(); console.log(clicks);
-      }} onMouseLeave={() => {setClicks(0)}} className={classAndTextStyles.div}>
+      <div onClick={() => {handleClick();}} onMouseLeave={() => {setClicks(0)}} className={classAndTextStyles.div}>
         <h3 className={classAndTextStyles.title}>{title}</h3>
         <p className={classAndTextStyles.desc}>{classAndTextStyles.questionsText}</p>
 

@@ -55,7 +55,7 @@ function AutoQuestion({createQuestion, cancelCreation}) {
             "parameters": {
               "type": "object",
               "properties": {
-                "statement": {
+                "header": {
                   "type": "string"
                 },
                 "options": {
@@ -65,11 +65,12 @@ function AutoQuestion({createQuestion, cancelCreation}) {
                   }
                 },
                 "answer": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The question's answer without the option letter (A,B,C,D,E)."
                 }
               },
               "required": [
-                "statement",
+                "header",
                 "options",
                 "answer"
               ]
@@ -78,8 +79,6 @@ function AutoQuestion({createQuestion, cancelCreation}) {
         }
       ],
     });
-
-    console.log(response.choices[0].message.tool_calls[0].function.arguments);
     
     var responseJSON = JSON.parse(response.choices[0].message.tool_calls[0].function.arguments);
     setGptCorrection(null)
@@ -101,7 +100,7 @@ function AutoQuestion({createQuestion, cancelCreation}) {
 
       <div className='flex justify-between'>
         <div>
-          <h1 className="text-4xl font-bold">Questão Automática</h1>
+          <h1 className="text-4xl font-bold">Auto-Organização</h1>
           <p className="text-zinc-500">
             Coloque a questão como o recomendado abaixo e ela será organizada por I.A.
           </p>
@@ -112,13 +111,15 @@ function AutoQuestion({createQuestion, cancelCreation}) {
       </div>
       
       <div className=''>
-        <textarea onChange={(e) => {setQuestion(e.target.value)}} value={question} className='w-full h-[12rem] outline-none mt-8 rounded-lg text-justify' placeholder='A fotossíntese é um processo vital para a produção de energia em plantas. Qual das alternativas a seguir descreve corretamente o papel da clorofila na fotossíntese?
+        <textarea onChange={(e) => {setQuestion(e.target.value)}} value={question} className='w-full h-[15rem] outline-none mt-8 rounded-lg text-justify' placeholder='A fotossíntese é um processo vital para a produção de energia em plantas. Qual das alternativas a seguir descreve corretamente o papel da clorofila na fotossíntese?
 
   A) A clorofila é responsável pela absorção de dióxido de carbono do ar.
   B) A clorofila é responsável pela produção de glicose a partir de água e luz solar.
   C) A clorofila absorve luz solar, convertendo-a em energia química durante a fase clara da fotossíntese.
   D) A clorofila é a principal enzima que converte ATP em ADP durante a fotossíntese.
   E) A clorofila libera oxigênio como um subproduto durante a fase escura da fotossíntese.
+
+  Resposta: A) A clorofila é responsável pela absorção de dióxido de carbono do ar.
 
   '></textarea>
       <button onClick={() => correctGPT()} className='w-full flex justify-center items-center gap-3 border-[0.7px] p-4 border-zinc-300 rounded-lg mt-10 hover:border-zinc-500 transition-all text-zinc-400 hover:text-zinc-700'>

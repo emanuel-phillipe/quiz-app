@@ -51,8 +51,8 @@ function GameEnd() {
         </div>
         
         <div className='flex flex-col gap-4'>
-          <button onClick={() => dispatch({type: "NEW_GAME"})} className='p-4 w-full bg-zinc-700 rounded-[0.5rem] hover:bg-zinc-900 transition-all text-zinc-50 font-medium'>Início</button>
-          <button onClick={() => dispatch({type: "INCORRECT_QUESTIONS"})} className='p-4 w-full border-[1.7px] hover:bg-zinc-100 hover:border-zinc-500 border-zinc-400 rounded-[0.5rem]  transition-all font-medium'>Questões Erradas</button>
+          <button onClick={() => dispatch({type: "HOME_PAGE"})} className='p-4 w-full bg-zinc-700 rounded-[0.5rem] hover:bg-zinc-900 transition-all text-zinc-50 font-medium'>Início</button>
+          { quizState.incorrectQuestions != [] && <button onClick={() => dispatch({type: "INCORRECT_QUESTIONS"})} className='p-4 w-full border-[1.7px] hover:bg-zinc-100 hover:border-zinc-500 border-zinc-400 rounded-[0.5rem] transition-all font-medium'>Questões Erradas</button> }
         </div>
       </div>
     </div>
