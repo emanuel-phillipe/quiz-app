@@ -6,6 +6,7 @@ import AutoQuestion from "./AutoQuestion";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import LoadingScreen from "../LoadingScreen";
 
 // {
 //   question: "Qual é a principal diferença entre os conceitos de fotossíntese e respiração celular?",
@@ -25,6 +26,7 @@ export function QuestionCreation() {
     questions: [],
   })
   const [currentCreator, setCurrentCreator] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const [questionsCreation, setQuestionsCreation] = useState(false)
   const [autoQuestion, setAutoQuestion] = useState(false)
@@ -73,13 +75,17 @@ export function QuestionCreation() {
       return false
     }
 
+    setLoading(true)
+
     const creationResponse = await axios.post(import.meta.env.VITE_API + "/quiz/create", quizValues, {
       headers: {"Authorization": "Bearer " + cookies.userToken}
     }).catch((err) => {
       alert(`Erro ao criar Quiz (${err.status})`)
     })
 
-    dispatch({type: "HOME_PAGE"})
+    setLoading(false)
+
+    if(!loading) dispatch({type: "HOME_PAGE"})
   }
 
   const createAutoQuestion = (questionJson) => {
@@ -122,6 +128,8 @@ export function QuestionCreation() {
       return (<AutoQuestion cancelCreation={() => {setAutoQuestion(false)}} createQuestion={createAutoQuestion}/>)
     }else{
       return (<div className="py-3 md:py-7">
+
+        {loading && <LoadingScreen />}
 
         <div className="flex justify-between backdrop-blur-sm">
           <div>

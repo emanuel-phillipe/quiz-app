@@ -1,6 +1,6 @@
 import { createContext, useReducer } from "react";
 
-const stages = ["Start", "Playing", "End", "Incorrects", "Creation", "QuestionCreation", "Auth"];
+const stages = ["Start", "Playing", "End", "Incorrects", "Creation", "QuestionCreation", "Auth", "Admin"];
 
 const initialState = {
   gameStage: stages[6],

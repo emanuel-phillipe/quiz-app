@@ -8,6 +8,7 @@ import {QuestionCreation} from "./components/QuizCreation/QuestionCreation";
 import Auth from "./components/Authentication/Auth";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import Admin from "./pages/Admin";
 
 export function App() {
 
@@ -45,6 +46,7 @@ export function App() {
       {quizState.gameStage === "End" && <GameEnd />}
       {quizState.gameStage === "Incorrects" && <IncorrectQuestions />}
       {quizState.gameStage === "Auth" && <Auth />}
+      {quizState.gameStage === "Admin" && <Admin />}
     </div>
   )
 }

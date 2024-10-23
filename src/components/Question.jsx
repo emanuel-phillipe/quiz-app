@@ -5,6 +5,9 @@ import Latex from "react-latex"
 
 export const Question = () => {
 
+  console.log("Oiio");
+  
+
   const [currentSelection, setCurrentSelection] = useState({
     option: "",
     answer: "",
