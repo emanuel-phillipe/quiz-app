@@ -84,7 +84,7 @@ export function WelcomePage(){
 
       {callEmptyScreen()}
 
-      {anyQuizSelected && <QuizSelectionPopup quizSelected={anyQuizSelected} index={anyQuizSelected.index}/>}
+      {anyQuizSelected && <QuizSelectionPopup leavePopup={() => {setAnyQuizSelected(undefined)}} quizSelected={anyQuizSelected} index={anyQuizSelected.index}/>}
 
       <HistoryPage hidden={history} setHidden={() => setHistory(false)}/>
 
@@ -113,8 +113,8 @@ export function WelcomePage(){
 
       </div>
 
-      <footer className="fixed left-0 bottom-5 flex justify-center w-full"> 
-        <div className="border-[0.7px] shadow-md flex justify-center gap-2 items-center border-zinc-300 p-1 rounded-lg">
+      <footer className="fixed left-0 bottom-0 backdrop-blur-sm z-10 flex items-center justify-center w-full"> 
+        <div className="border-[0.7px] shadow-md flex mb-5 justify-center gap-2 bg-zinc-100/60 items-center border-zinc-300 p-1 rounded-lg">
 
           <ButtonTooltip title="Histórico">
             <button className="hover:bg-zinc-100 transition-all p-2 rounded-md"><ClockCounterClockwise size={22} alt="Histórico"/></button>
@@ -138,13 +138,13 @@ export function WelcomePage(){
   )
 }
 
-function QuizSelectionPopup({quizSelected, index}) {
+function QuizSelectionPopup({quizSelected, leavePopup, index}) {
 
   const [quizState, dispatch] = useContext(QuizContext)
 
   return (
-    <div className="fixed flex justify-center items-center w-full h-screen backdrop-blur-sm top-0 left-0 z-10 bg-zinc-800/12">
-      <div className="bg-zinc-50 border-[0.7px] border-zinc-200 shadow-sm p-5 rounded-lg">
+    <div onClick={() => {leavePopup()}} className="fixed backdrop-blur-sm flex justify-center items-center w-full h-screen top-0 left-0 z-20 bg-zinc-800/12">
+      <div className="bg-zinc-50 border-[0.7px] border-zinc-200 shadow-xl p-5 rounded-lg">
         <h1 className="text-2xl font-semibold">{quizSelected.title}</h1>
         <p className="text-zinc-500 text-[0.9rem]">{quizSelected.questions.length} questões objetivas</p>
 
