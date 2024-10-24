@@ -223,7 +223,7 @@ function IncorrectQuestions() {
           {currentCorrection == "" ? (
             <div
               onClick={() => alert("Desculpe, mas a correção por I.A está em manutenção no momento.")}
-              className="mb-4 flex items-center justify-center hover:border-zinc-400 gap-3 p-3 px-4 text-center cursor-not-allowed transition-all rounded-lg w-max font-medium border-[1.7px] border-zinc-300"
+              className="mb-4 flex items-center justify-center gap-3 p-3 px-4 text-center cursor-not-allowed transition-all rounded-lg w-max font-medium border-[1.7px] border-zinc-300"
             >
               {geminiProgress == "running" ? (
                 <CircularProgress
