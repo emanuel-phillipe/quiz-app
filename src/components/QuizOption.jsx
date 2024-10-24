@@ -31,18 +31,11 @@ function QuizOption({title, desc, creator, questionNumber, click, subject}) {
 
   const [clicks, setClicks] = useState(0)
   const handleClick = () => {
-    if(clicks === 0) {
-      setClicks(1)      
-
-      return
-    }else {
-      setCreatorsWidget(false)
-      click()
-    }
+    click()
   }  
 
   return (
-      <div onClick={() => {handleClick();}} onMouseLeave={() => {setClicks(0)}} className={classAndTextStyles.div}>
+      <div onClick={() => {handleClick();}} className={classAndTextStyles.div}>
         <h3 className={classAndTextStyles.title}>{title}</h3>
         <p className={classAndTextStyles.desc}>{classAndTextStyles.questionsText}</p>
 

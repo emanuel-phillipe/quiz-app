@@ -13,6 +13,7 @@ export function WelcomePage(){
   const [history, setHistory] = useState(false)
   const [infoFetched, setInfoFetched] = useState(false)
   const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
+  const [anyQuizSelected, setAnyQuizSelected] = useState(undefined)
 
   useEffect(() => {
     const getQuizes = async () => {
@@ -60,7 +61,7 @@ export function WelcomePage(){
     try{
       if(infoFetched && quizState.subjects.length > 0){
         return quizState.subjects.map((subject, index) => {          
-          return (<QuizOption key={index} creator={[subject.creators]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => dispatch({type: "SELECT_QUESTION_AND_SORT", payload: {index}})}/>)
+          return (<QuizOption key={index} creator={[subject.creators]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => setAnyQuizSelected({...subject, index})}/>)
         })
       }
     }catch(err) {
@@ -82,6 +83,8 @@ export function WelcomePage(){
     <div className="py-[2rem] md:py-10">
 
       {callEmptyScreen()}
+
+      {anyQuizSelected && <QuizSelectionPopup quizSelected={anyQuizSelected} index={anyQuizSelected.index}/>}
 
       <HistoryPage hidden={history} setHidden={() => setHistory(false)}/>
 
@@ -131,6 +134,32 @@ export function WelcomePage(){
         </div>
       </footer>
 
+    </div>
+  )
+}
+
+function QuizSelectionPopup({quizSelected, index}) {
+
+  const [quizState, dispatch] = useContext(QuizContext)
+
+  return (
+    <div className="fixed flex justify-center items-center w-full h-screen backdrop-blur-sm top-0 left-0 z-10 bg-zinc-800/12">
+      <div className="bg-zinc-50 border-[0.7px] border-zinc-200 shadow-sm p-5 rounded-lg">
+        <h1 className="text-2xl font-semibold">{quizSelected.title}</h1>
+        <p className="text-zinc-500 text-[0.9rem]">{quizSelected.questions.length} questões objetivas</p>
+
+        <hr className="mt-4"/>
+
+        <div className="grid grid-cols-2 text-justify w-full mt-5">
+          {
+            quizSelected.creators.map((creator, index) => {
+              return (<p className="text-[0.9rem]" key={index}><span className="text-[0.8rem] font-bold text-zinc-700">{index + 1}.</span> {creator}</p>)
+            })
+          }
+        </div>
+
+        <button onClick={() => {dispatch({type: "SELECT_QUESTION_AND_SORT", payload: {index}})}} className="w-full py-2 bg-zinc-100 border-[0.7px] border-zinc-200 shadow-sm rounded-md mt-5 font-semibold hover:border-zinc-400 transition-all hover:bg-zinc-200">Jogar</button>
+      </div>
     </div>
   )
 }
