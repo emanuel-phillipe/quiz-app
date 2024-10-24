@@ -167,12 +167,12 @@ function IncorrectQuestions() {
             ? 
             <Latex colorIsTextColor={true}>
               {
-                quizState.incorrectQuestions[selectedQuestion].questionObject.question 
+                quizState.incorrectQuestions[selectedQuestion].questionObject.header 
               }
             </Latex>
             :
             <p>
-              {quizState.incorrectQuestions[selectedQuestion].questionObject.question}
+              {quizState.incorrectQuestions[selectedQuestion].questionObject.header}
             </p>
           }
         </div>
@@ -222,8 +222,8 @@ function IncorrectQuestions() {
 
           {currentCorrection == "" ? (
             <div
-              onClick={() => correctGemini()}
-              className="mb-4 flex items-center justify-center hover:border-zinc-400 gap-3 p-3 px-4 text-center cursor-pointer transition-all rounded-lg w-max font-medium border-[1.7px] border-zinc-300"
+              onClick={() => alert("Desculpe, mas a correção por I.A está em manutenção no momento.")}
+              className="mb-4 flex items-center justify-center hover:border-zinc-400 gap-3 p-3 px-4 text-center cursor-not-allowed transition-all rounded-lg w-max font-medium border-[1.7px] border-zinc-300"
             >
               {geminiProgress == "running" ? (
                 <CircularProgress
