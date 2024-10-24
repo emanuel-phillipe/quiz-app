@@ -46,7 +46,7 @@ function QuizOption({title, desc, creator, questionNumber, click, subject}) {
         <h3 className={classAndTextStyles.title}>{title}</h3>
         <p className={classAndTextStyles.desc}>{classAndTextStyles.questionsText}</p>
 
-        <p className={`bg-zinc-100 ${clicks === 1 && 'bg-zinc-200'} p-2 mt-3 rounded-sm text-[0.9rem]`}>{clicks == 0 ? truncate(creator.join(", "), 50) : creator.join(", ")}</p>
+        <p className={`bg-zinc-100 ${clicks === 1 && 'bg-zinc-200'} p-2 mt-3 rounded-md text-[0.9rem]`}>{clicks == 0 ? truncate(creator.join(", "), 50) : creator.join(", ")}</p>
       </div>
   )
 }

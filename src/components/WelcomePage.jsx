@@ -60,7 +60,7 @@ export function WelcomePage(){
     try{
       if(infoFetched && quizState.subjects.length > 0){
         return quizState.subjects.map((subject, index) => {          
-          return (<QuizOption key={index} creator={[subject.creatorId]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => dispatch({type: "SELECT_QUESTION_AND_SORT", payload: {index}})}/>)
+          return (<QuizOption key={index} creator={[subject.creators]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => dispatch({type: "SELECT_QUESTION_AND_SORT", payload: {index}})}/>)
         })
       }
     }catch(err) {
