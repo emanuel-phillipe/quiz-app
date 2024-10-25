@@ -12,6 +12,7 @@ const initialState = {
   answerSelected: false,
   timeNeeded: {minutes: 0, seconds: 0},
   incorrectQuestions: [],
+  quizSelectedToEdit: {},
   history: JSON.parse(localStorage.getItem("navigatorInfo")) || [],
 }
 
@@ -148,9 +149,18 @@ const quizReducer = (state, action) => {
           gameStage: stages[2]
         }
       case "QUIZ_CREATION":
+
+        if(action.payload.quiz){
+          return {
+            ...state,
+            gameStage: stages[4],
+            quizSelectedToEdit: action.payload.quiz
+          }
+        }
+
         return {
           ...state,
-          gameStage: stages[4]
+          gameStage: stages[4],
         }
       case "CREATE_QUESTION_PAGE":
         return {

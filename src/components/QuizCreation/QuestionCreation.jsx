@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { QuizContext } from "../../context/quiz";
 import { Plus, PlusMinus, Sparkle, Trash, TrashSimple } from "@phosphor-icons/react";
 import { CreateQuestionPage } from "./CreateQuestionPage";
@@ -31,6 +31,23 @@ export function QuestionCreation() {
   const [questionsCreation, setQuestionsCreation] = useState(false)
   const [autoQuestion, setAutoQuestion] = useState(false)
 
+  const [isQuizToEditSet,setIsQuizToEditSet] = useState(false)
+  useEffect(() => {
+    if(!isQuizToEditSet){
+      if(quizState.quizSelectedToEdit){
+
+        const quizToEdit = quizState.quizSelectedToEdit
+      
+        setIsQuizToEditSet(true)
+        setQuizValues({
+          title: quizToEdit.title,
+          creators: [...quizToEdit.creators],
+          questions: quizToEdit.questions
+        })
+      }
+    }
+  })
+
   const truncate = (text, limit) => {
     if (text.length > limit) {
         for (let i = limit; i > 0; i--){
@@ -45,14 +62,24 @@ export function QuestionCreation() {
   }
   
   const saveQuestion = (question) => {
-    setQuizValues((current) => {
-      return {
-        ...current,
-        questions: [...current.questions, question]
-      }
-    })
+
+    if(!quizState.quizSelectedToEdit){
+      setQuizValues((current) => {
+        return {
+          ...current,
+          questions: [...current.questions, question]
+        }
+      })
+    }else{
+      setQuizValues((current) => {
+        return {
+          ...current,
+          questions: [...current.questions, {...question, quizId: quizState.quizSelectedToEdit.id}]
+        }
+      })
     
     setQuestionsCreation(false)
+    }
   }
 
   const removeQuestion = (indexToRemove) => {
@@ -77,11 +104,32 @@ export function QuestionCreation() {
 
     setLoading(true)
 
-    const creationResponse = await axios.post(import.meta.env.VITE_API + "/quiz/create", quizValues, {
-      headers: {"Authorization": "Bearer " + cookies.userToken}
-    }).catch((err) => {
-      alert(`Erro ao criar Quiz (${err.status})`)
-    })
+    if(!quizState.quizSelectedToEdit){
+      const creationResponse = await axios.post(import.meta.env.VITE_API + "/quiz/create", quizValues, {
+        headers: {"Authorization": "Bearer " + cookies.userToken}
+      }).catch((err) => {
+        alert(`Erro ao criar Quiz (${err.status})`)
+      })
+    }else {
+
+      let questionsWithoutId = []
+      quizValues.questions.map((question) => {
+        const { id: _, ...newQuestion } = question;
+        questionsWithoutId.push(newQuestion)
+      })
+
+      const { questions: _, ...newQuiz } = quizValues;
+      const requestBody = {...newQuiz, "questions": questionsWithoutId, "quizId": quizState.quizSelectedToEdit.id}
+
+      console.log(requestBody);
+
+      const editingQuizResponse = await axios.put(import.meta.env.VITE_API + "/quiz/update", requestBody, {
+        headers: {"Authorization": "Bearer " + cookies.userToken}
+      }).catch((err) => {
+        console.log(err);
+        alert(`Erro ao editar Quiz (${err.status})`)
+      })
+    }
 
     setLoading(false)
 
