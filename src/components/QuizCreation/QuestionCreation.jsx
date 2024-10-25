@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { QuizContext } from "../../context/quiz";
-import { Plus, PlusMinus, Sparkle, Trash, TrashSimple } from "@phosphor-icons/react";
+import { Pencil, Plus, PlusMinus, Sparkle, Trash, TrashSimple } from "@phosphor-icons/react";
 import { CreateQuestionPage } from "./CreateQuestionPage";
 import AutoQuestion from "./AutoQuestion";
 import { isMobile } from "react-device-detect";
@@ -20,6 +20,7 @@ export function QuestionCreation() {
 
   const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
   const [quizState, dispatch] = useContext(QuizContext)
+  const [deleteQuiz, setDeleteQuiz] = useState(false)
   const [quizValues, setQuizValues] = useState({
     title: "",
     creators: [quizState.userInfo.smallName],
@@ -46,6 +47,7 @@ export function QuestionCreation() {
         })
       }
     }
+    return
   })
 
   const truncate = (text, limit) => {
@@ -70,6 +72,8 @@ export function QuestionCreation() {
           questions: [...current.questions, question]
         }
       })
+
+      setQuestionsCreation(false)
     }else{
       setQuizValues((current) => {
         return {
@@ -78,7 +82,7 @@ export function QuestionCreation() {
         }
       })
     
-    setQuestionsCreation(false)
+      setQuestionsCreation(false)
     }
   }
 
@@ -178,6 +182,7 @@ export function QuestionCreation() {
       return (<div className="py-3 md:py-7">
 
         {loading && <LoadingScreen />}
+        {deleteQuiz && <QuizDeletePopup leavePopup={() => setDeleteQuiz(false)}/>}
 
         <div className="flex justify-between backdrop-blur-sm">
           <div>
@@ -191,6 +196,7 @@ export function QuestionCreation() {
             {
               isMobile ? "" : <button className={buttonStyle} onClick={() => createQuiz()}>Criar</button>
             }
+            {quizState.quizSelectedToEdit && <button onClick={() => {setDeleteQuiz(true)}} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-red-300 hover:text-red-500 hover:border-red-500 transition-all">Deletar</button>}
             <button onClick={() => dispatch({type: "HOME_PAGE"})} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all">Cancelar</button>
           </div>
         </div>
@@ -238,8 +244,14 @@ export function QuestionCreation() {
                         <p className="text-[0.9rem] text-zinc-500">{current.options.length} opções</p>
                       </div>
                     </div>
-                    <div onClick={() => {removeQuestion(index)}} className="mr-4 text-zinc-500 hover:text-zinc-700 transition-all cursor-pointer p-2">
-                      <TrashSimple size={22} weight="bold" alt={"Remover questão " + index}/>
+                    <div className="flex">
+                      <div onClick={() => {removeQuestion(index)}} className="mr-4 text-zinc-500 hover:text-zinc-700 transition-all cursor-pointer p-2">
+                        <Pencil size={22} weight="regular" alt={"Editar questão " + index}/>
+                      </div>
+                      <div onClick={() => {removeQuestion(index)}} className="mr-4 text-zinc-500 hover:text-zinc-700 transition-all cursor-pointer p-2">
+                        <TrashSimple size={22} weight="regular" alt={"Remover questão " + index}/>
+                      </div>
+                      
                     </div>
                   </div>
                 )
@@ -267,4 +279,42 @@ export function QuestionCreation() {
       }
     </div>
   );
+}
+
+function QuizDeletePopup({leavePopup}) {
+
+  const [quizState, dispatch] = useContext(QuizContext)
+  const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
+  const [loading, setLoading] = useState(false)
+
+  const deleteQuiz = async () => {
+
+    setLoading(true)
+
+    await axios.post(import.meta.env.VITE_API + "/quiz/delete", {quizId: [quizState.quizSelectedToEdit.id]}, {
+      "headers": {"Authorization": "Bearer " + cookies.userToken}
+    }).catch((err) => {
+      console.log(err);
+    })
+
+    setLoading(false)
+    dispatch({type: "HOME_PAGE"})
+  }
+
+  return (
+    <div onClick={() => {}} className="fixed backdrop-blur-sm flex justify-center items-center w-full h-screen top-0 left-0 z-20 bg-zinc-800/12">
+
+      {loading && <LoadingScreen />}
+
+      <div className="bg-zinc-50 border-[0.7px] border-zinc-200 shadow-xl p-5 rounded-lg">
+        <h1 className="text-2xl font-semibold">Deletar Quiz</h1>
+        <p className="text-zinc-500 text-[0.9rem]">Tem certeza que deseja deletar o quiz?</p>
+
+        <hr className="mt-4"/>
+
+        <button onClick={() => {deleteQuiz()}} className="w-full py-2 bg-red-100 border-[0.7px] border-red-300 shadow-sm rounded-md mt-5 font-semibold hover:border-red-600 transition-all hover:bg-red-200">Deletar</button>
+        <button onClick={() => {leavePopup()}} className="w-full py-2 bg-zinc-100 border-[0.7px] border-zinc-200 shadow-sm rounded-md mt-5 font-semibold hover:border-zinc-400 transition-all hover:bg-zinc-200">Cancelar</button>
+      </div>
+    </div>
+  )
 }

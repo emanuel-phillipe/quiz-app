@@ -12,7 +12,7 @@ const initialState = {
   answerSelected: false,
   timeNeeded: {minutes: 0, seconds: 0},
   incorrectQuestions: [],
-  quizSelectedToEdit: {},
+  quizSelectedToEdit: undefined,
   history: JSON.parse(localStorage.getItem("navigatorInfo")) || [],
 }
 
@@ -30,6 +30,7 @@ const quizReducer = (state, action) => {
     case "HOME_PAGE":
       return {
         ...state,
+        quizSelectedToEdit: undefined,
         gameStage: stages[0]
       }
     case "USER_AUTH":      
@@ -149,8 +150,7 @@ const quizReducer = (state, action) => {
           gameStage: stages[2]
         }
       case "QUIZ_CREATION":
-
-        if(action.payload.quiz){
+        if(action.payload){
           return {
             ...state,
             gameStage: stages[4],
