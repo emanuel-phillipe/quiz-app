@@ -7,6 +7,9 @@ import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import LoadingScreen from "../LoadingScreen";
+import useDebounce from "../../lib/useDebounce";
+import UserList from "./UserList";
+import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 // {
 //   question: "Qual é a principal diferença entre os conceitos de fotossíntese e respiração celular?",
@@ -173,6 +176,24 @@ export function QuestionCreation() {
     }
   }
 
+  const debouncedUserSearchValue = useDebounce(currentCreator, 1000)
+  const [fetchedUsers, setFetchedUsers] = useState([])
+
+  useEffect(() => {    
+    const fetchUsers = async () => {
+      const findUserRequest = await axios.post(import.meta.env.VITE_API + "/user/find", {"name": debouncedUserSearchValue}, {
+        headers: {"Authorization": "Bearer " + cookies.userToken}
+      }).catch((err) => {
+        console.log(err);
+        alert(`Erro ao encontrar usuário (${err.status})`)
+      })
+      
+      setFetchedUsers(findUserRequest.data.info)
+    }
+
+    fetchUsers()
+  }, [debouncedUserSearchValue])
+
   const renderPage = () => {
     if(questionsCreation){
       return (<CreateQuestionPage cancelQuestion={() => {setQuestionsCreation(false)}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
@@ -210,12 +231,23 @@ export function QuestionCreation() {
           <div className="">
             <p className="font-semibold mb-1 text-zinc-700">Nome(s) do(s) Criador(es) <span className={`text-[0.8rem] ml-2 ${isMobile && 'block ml-0 mb-3'} font-normal text-zinc-500`}>Escreva o nome e pressione ENTER</span></p>
             <div className="flex gap-2">
-              <input onKeyDown={onKeyDownCreator} type="text" placeholder="Ex. Eduardo Ferreira" value={currentCreator} className="border-[0.7px] p-2 rounded-lg border-zinc-300 transition-all focus:border-zinc-700 outline-none" onChange={(e) => setCurrentCreator(e.target.value)}/>
+              <input onKeyDown={onKeyDownCreator} type="text" placeholder="Ex. Eduardo Ferreira" value={currentCreator} className="border-[0.7px] p-2 rounded-lg border-zinc-300 transition-all focus:border-zinc-700 outline-none" onChange={(e) => setCurrentCreator(e.target.value)}/>              
               <button onClick={addCreator} disabled={currentCreator === ""} className={`p-2 ${currentCreator === "" ? 'cursor-not-allowed' : 'hover:bg-zinc-200'} px-4 rounded-lg bg-zinc-100`}><Plus size={18}/></button>
             </div>
             {
               quizValues.creators && <p className="text-[0.8rem] mt-2 text-zinc-500">{quizValues.creators.map(String).join(", ")}</p>
             }
+            <List style={{maxHeight: 150,overflow: 'auto'}}>
+              {
+                fetchedUsers.map((user) => {
+                  return (<ListItem key={user.id} disablePadding>
+                    <ListItemButton onClick={() => {setCurrentCreator(user.fullName);}} style={{borderRadius: '8px', padding: '2px 12px'}}>
+                      <ListItemText>{user.fullName}</ListItemText>
+                    </ListItemButton>
+                  </ListItem>)
+                })
+              }
+            </List>
           </div>
         </div>
   
@@ -259,6 +291,10 @@ export function QuestionCreation() {
             }
 
           </div>
+        </div>
+
+        <div>
+        
         </div>
 
         {

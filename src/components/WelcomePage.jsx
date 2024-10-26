@@ -7,6 +7,7 @@ import axios from "axios"
 import { useCookies } from "react-cookie"
 import Empty from "./Empty"
 import { styled, Tooltip, tooltipClasses } from "@mui/material"
+import Profile from "./Profile"
 
 export function WelcomePage(){
   const [quizState, dispatch] = useContext(QuizContext)
@@ -79,10 +80,14 @@ export function WelcomePage(){
     }
   }
 
+  const [currentMenu, setCurrentMenu] = useState(undefined)
+
   return (
     <div className="py-[2rem] md:py-10">
 
       {callEmptyScreen()}
+
+      {currentMenu === "conta" && <Profile leavePopup={() => {setCurrentMenu(undefined)}}/>}
 
       {anyQuizSelected && <QuizSelectionPopup leavePopup={() => {setAnyQuizSelected(undefined)}} quizSelected={anyQuizSelected} index={anyQuizSelected.index}/>}
 
@@ -90,7 +95,10 @@ export function WelcomePage(){
 
       <header className="flex justify-between backdrop-blur-sm">
         <div>
-          <h1 className="text-4xl font-bold">{`Olá, ${quizState.userInfo.smallName}`}</h1>
+          <div className="flex gap-2 items-center">
+            <h1 className="text-4xl font-bold">{`Olá, ${quizState.userInfo.smallName}`}</h1> 
+            {quizState.userInfo.type === "ADMIN" && <span className="bg-zinc-800 shadow-xl h-max text-zinc-100 px-2 py-1 rounded-lg text-[0.8rem] font-medium">ADMINISTRADOR</span>}
+          </div>
           <p className="text-zinc-500 mr-5">Seja muuito bem-vindo(a)! Para começar, é só clicar em algum quiz!</p>
         </div>
         
@@ -125,7 +133,7 @@ export function WelcomePage(){
           </ButtonTooltip>
 
           <ButtonTooltip title="Conta">
-            <button className="hover:bg-zinc-100 transition-all p-2 rounded-md"><User size={22} alt="Conta"/></button>
+            <button onClick={() => {setCurrentMenu('conta')}} className="hover:bg-zinc-100 transition-all p-2 rounded-md"><User size={22} alt="Conta"/></button>
           </ButtonTooltip>
 
           <ButtonTooltip title="Amigos">
@@ -150,7 +158,7 @@ function QuizSelectionPopup({quizSelected, leavePopup, index}) {
 
         <hr className="mt-4"/>
 
-        <div className="grid grid-cols-2 text-justify w-full mt-5">
+        <div className="grid grid-cols-2 gap-3 text-justify w-full mt-5">
           {
             quizSelected.creators.map((creator, index) => {
               return (<p className="text-[0.9rem]" key={index}><span className="text-[0.8rem] font-bold text-zinc-700">{index + 1}.</span> {creator}</p>)
