@@ -107,7 +107,7 @@ function AutoQuestion({createQuestion, cancelCreation}) {
           </p>
         </div>
         <div>
-          {!isMobile && <button onClick={cancelCreation} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-zinc-300 text-zinc-500 hover:text-zinc-700 hover:border-zinc-500 transition-all">Cancelar</button>}
+          {!isMobile && <button onClick={cancelCreation} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-zinc-300 text-zinc-500 hover:text-zinc-700 hover:border-zinc-500 transition-all">Voltar</button>}
         </div>
       </div>
       
