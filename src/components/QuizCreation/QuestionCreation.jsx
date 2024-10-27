@@ -176,23 +176,23 @@ export function QuestionCreation() {
     }
   }
 
-  const debouncedUserSearchValue = useDebounce(currentCreator, 1000)
-  const [fetchedUsers, setFetchedUsers] = useState([])
+  // const debouncedUserSearchValue = useDebounce(currentCreator, 1000)
+  // const [fetchedUsers, setFetchedUsers] = useState([])
 
-  useEffect(() => {    
-    const fetchUsers = async () => {
-      const findUserRequest = await axios.post(import.meta.env.VITE_API + "/user/find", {"name": debouncedUserSearchValue}, {
-        headers: {"Authorization": "Bearer " + cookies.userToken}
-      }).catch((err) => {
-        console.log(err);
-        alert(`Erro ao encontrar usuário (${err.status})`)
-      })
+  // useEffect(() => {    
+  //   const fetchUsers = async () => {
+  //     const findUserRequest = await axios.post(import.meta.env.VITE_API + "/user/find", {"name": debouncedUserSearchValue}, {
+  //       headers: {"Authorization": "Bearer " + cookies.userToken}
+  //     }).catch((err) => {
+  //       console.log(err);
+  //       alert(`Erro ao encontrar usuário (${err.status})`)
+  //     })
       
-      setFetchedUsers(findUserRequest.data.info)
-    }
+  //     setFetchedUsers(findUserRequest.data.info)
+  //   }
 
-    fetchUsers()
-  }, [debouncedUserSearchValue])
+  //   fetchUsers()
+  // }, [debouncedUserSearchValue])
 
   const renderPage = () => {
     if(questionsCreation){
@@ -206,9 +206,9 @@ export function QuestionCreation() {
         {deleteQuiz && <QuizDeletePopup leavePopup={() => setDeleteQuiz(false)}/>}
 
         <div className="flex justify-between backdrop-blur-sm">
-          <div>
-            <h1 className="text-4xl font-bold">Criação de Quiz</h1>
-            <p className="text-zinc-500">
+          <div className="w-full">
+            {isMobile ? <h1 className="text-3xl mt-5 font-bold">Criação de Quiz</h1> : <h1 className="text-4xl font-bold">Criação de Quiz</h1>}
+            <p className="text-zinc-500 w-full text-justify">
               Aqui, é possível criar um novo quiz, com quantas perguntas quiser!
             </p>
           </div>
@@ -218,26 +218,26 @@ export function QuestionCreation() {
               isMobile ? "" : <button className={buttonStyle} onClick={() => createQuiz()}>Criar</button>
             }
             {quizState.quizSelectedToEdit && <button onClick={() => {setDeleteQuiz(true)}} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-red-300 hover:text-red-500 hover:border-red-500 transition-all">Deletar</button>}
-            <button onClick={() => dispatch({type: "HOME_PAGE"})} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all">Cancelar</button>
+            {!isMobile && <button onClick={() => dispatch({type: "HOME_PAGE"})} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all">Cancelar</button>}
           </div>
         </div>
   
         <div className="mt-10 flex flex-col md:flex-row gap-10">
           <div className="">
             <p className="font-semibold mb-1 text-zinc-700">Título / Matéria</p>
-            <input type="text" placeholder="Ex. Química" value={quizValues.title} className="border-[0.7px] p-2 rounded-lg border-zinc-300 transition-all focus:border-zinc-700 outline-none" onChange={(e) => setQuizValues((current) => { return {...current, title: e.target.value}})}/>
+            <input type="text" placeholder="Ex. Química" value={quizValues.title} className={`border-[0.7px] p-2 ${isMobile && "w-full"} rounded-lg border-zinc-300 transition-all focus:border-zinc-700 outline-none`} onChange={(e) => setQuizValues((current) => { return {...current, title: e.target.value}})}/>
           </div>
 
           <div className="">
-            <p className="font-semibold mb-1 text-zinc-700">Nome(s) do(s) Criador(es) <span className={`text-[0.8rem] ml-2 ${isMobile && 'block ml-0 mb-3'} font-normal text-zinc-500`}>Escreva o nome e pressione ENTER</span></p>
+            <p className="font-semibold mb-1 text-zinc-700">Nome(s) do(s) Criador(es) <span className={`text-[0.8rem] ${isMobile && 'block ml-0 mb-3'} font-normal text-zinc-500`}>Escreva o nome e pressione ENTER</span></p>
             <div className="flex gap-2">
-              <input onKeyDown={onKeyDownCreator} type="text" placeholder="Ex. Eduardo Ferreira" value={currentCreator} className="border-[0.7px] p-2 rounded-lg border-zinc-300 transition-all focus:border-zinc-700 outline-none" onChange={(e) => setCurrentCreator(e.target.value)}/>              
+              <input onKeyDown={onKeyDownCreator} type="text" placeholder="Ex. Eduardo Ferreira" value={currentCreator} className={`border-[0.7px] ${isMobile && "w-full"} p-2 rounded-lg border-zinc-300 transition-all focus:border-zinc-700 outline-none`} onChange={(e) => setCurrentCreator(e.target.value)}/>              
               <button onClick={addCreator} disabled={currentCreator === ""} className={`p-2 ${currentCreator === "" ? 'cursor-not-allowed' : 'hover:bg-zinc-200'} px-4 rounded-lg bg-zinc-100`}><Plus size={18}/></button>
             </div>
             {
               quizValues.creators && <p className="text-[0.8rem] mt-2 text-zinc-500">{quizValues.creators.map(String).join(", ")}</p>
             }
-            <List style={{maxHeight: 150,overflow: 'auto'}}>
+            {/* <List style={{maxHeight: 150,overflow: 'auto'}}>
               {
                 fetchedUsers.map((user) => {
                   return (<ListItem key={user.id} disablePadding>
@@ -247,12 +247,14 @@ export function QuestionCreation() {
                   </ListItem>)
                 })
               }
-            </List>
+            </List> */}
           </div>
         </div>
+
+        <hr className="mt-5" />
   
-        <div className="mt-10 flex gap-2 flex-col">
-          <h2 className="font-semibold text-xl">Questões</h2>
+        <div className="mt-5 flex gap-2 flex-col">
+          <h2 className="font-semibold text-xl">Questões ({quizValues.questions.length})</h2>
           <div className="flex flex-col gap-3">
             <div className="flex flex-col md:flex-row mt-3 mb-4 justify-between gap-3">
               <div onClick={() => {setQuestionsCreation(true)}} className="p-4 flex gap-3 items-center cursor-pointer w-full border-[0.7px] text-zinc-400 justify-center border-zinc-300 rounded-lg hover:border-zinc-500 hover:text-zinc-900 transition-all">
@@ -298,8 +300,9 @@ export function QuestionCreation() {
         </div>
 
         {
-          isMobile ? <footer className="fixed backdrop-blur-md bottom-0 w-full left-0 px-[2rem] py-5 md:py-8 md:px-[5rem]">
+          isMobile ? <footer className="fixed backdrop-blur-md bottom-0 w-full left-0 px-[2rem] flex gap-2 py-5 md:py-8 md:px-[5rem]">
           <button className={buttonStyleMobile} onClick={() => createQuiz()}>Criar Quiz</button>
+          <button onClick={() => dispatch({type: "HOME_PAGE"})} className="px-4 rounded-lg font-medium border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all">Cancelar</button>
         </footer> : ""
         }
   
