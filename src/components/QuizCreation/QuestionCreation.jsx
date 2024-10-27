@@ -9,7 +9,7 @@ import { useCookies } from "react-cookie";
 import LoadingScreen from "../LoadingScreen";
 import useDebounce from "../../lib/useDebounce";
 import UserList from "./UserList";
-import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tooltip, tooltipClasses } from "@mui/material";
 
 // {
 //   question: "Qual é a principal diferença entre os conceitos de fotossíntese e respiração celular?",
@@ -194,6 +194,20 @@ export function QuestionCreation() {
   //   fetchUsers()
   // }, [debouncedUserSearchValue])
 
+  const ButtonTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+      color: "#f4f4f5",
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+      color: "#52525b",
+      backgroundColor: "#f4f4f5",
+      fontSize: theme.typography.pxToRem(13),
+      fontWeight: "bold"
+    },
+  }));
+
   const renderPage = () => {
     if(questionsCreation){
       return (<CreateQuestionPage cancelQuestion={() => {setQuestionsCreation(false)}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
@@ -235,7 +249,14 @@ export function QuestionCreation() {
               <button onClick={addCreator} disabled={currentCreator === ""} className={`p-2 ${currentCreator === "" ? 'cursor-not-allowed' : 'hover:bg-zinc-200'} px-4 rounded-lg bg-zinc-100`}><Plus size={18}/></button>
             </div>
             {
-              quizValues.creators && <p className="text-[0.8rem] mt-2 text-zinc-500">{quizValues.creators.map(String).join(", ")}</p>
+              quizValues.creators && <p>{quizValues.creators.map((creator, index) => {
+                
+                return (<ButtonTooltip title="Remover" key={index}>
+                  <span onClick={() => {setQuizValues((current) => {return {...current, creators: current.creators.filter((creatorFilter) => {return creatorFilter != creator})}})}} className="text-[0.8rem] cursor-pointer hover:underline mt-2 text-zinc-500" key={index}>{creator}{index != quizValues.creators.length - 1 && <span>, </span>}</span>
+                </ButtonTooltip>)
+              })}</p>
+
+              // quizValues.creators && <p className="text-[0.8rem] mt-2 text-zinc-500">{quizValues.creators.map(String).join(", ")}</p>
             }
             {/* <List style={{maxHeight: 150,overflow: 'auto'}}>
               {
