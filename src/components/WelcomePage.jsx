@@ -62,7 +62,7 @@ export function WelcomePage(){
     try{
       if(infoFetched && quizState.subjects.length > 0){
         return quizState.subjects.map((subject, index) => {          
-          return (<QuizOption key={index} creator={[subject.creators]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => setAnyQuizSelected({...subject, index})}/>)
+          return (<QuizOption key={index} creator={[subject.creators.sort()]} title={subject.title} questionNumber={subject.questions.length} subject={subject} click={() => setAnyQuizSelected({...subject, index})}/>)
         })
       }
     }catch(err) {
@@ -149,18 +149,22 @@ export function WelcomePage(){
 function QuizSelectionPopup({quizSelected, leavePopup, index}) {
 
   const [quizState, dispatch] = useContext(QuizContext)
+  const creators = quizSelected.creators.sort()
+
+  console.log(creators);
+  
 
   return (
     <div onClick={() => {leavePopup()}} className="fixed backdrop-blur-sm flex justify-center items-center w-full h-screen top-0 left-0 z-20 bg-zinc-800/12">
       <div className="bg-zinc-50 border-[0.7px] border-zinc-200 shadow-xl p-5 rounded-lg">
         <h1 className="text-2xl font-semibold">{quizSelected.title}</h1>
-        <p className="text-zinc-500 text-[0.9rem]">{quizSelected.questions.length} questões objetivas</p>
+        <p className="text-zinc-500 text-[0.9rem]">{quizSelected.questions.length} {quizSelected.questions.length === 1 ? 'questão objetiva' : 'questões objetivas'}</p>
 
         <hr className="mt-4"/>
 
         <div className="grid grid-cols-2 gap-3 text-justify w-full mt-5">
           {
-            quizSelected.creators.map((creator, index) => {
+            creators.map((creator, index) => {
               return (<p className="text-[0.9rem]" key={index}><span className="text-[0.8rem] font-bold text-zinc-700">{index + 1}.</span> {creator}</p>)
             })
           }
