@@ -64,7 +64,7 @@ export function QuestionCreation() {
     }
   }
   
-  const saveQuestion = (question) => {
+  const saveQuestion = (question) => {    
 
     if(!quizState.quizSelectedToEdit){
       setQuizValues((current) => {
@@ -76,13 +76,27 @@ export function QuestionCreation() {
 
       setQuestionsCreation(false)
     }else{
-      setQuizValues((current) => {
-        return {
-          ...current,
-          questions: [...current.questions, {...question, quizId: quizState.quizSelectedToEdit.id}]
-        }
-      })
-    
+
+      if(!questionToEdit){
+        setQuizValues((current) => {
+          return {
+            ...current,
+            questions: [...current.questions, {...question, quizId: quizState.quizSelectedToEdit.id}]
+          }
+        })
+      }else{
+        let questionsList = quizValues.questions
+
+        questionsList[questionToEditIndex] = {...question, quizId: quizState.quizSelectedToEdit.id}
+
+        setQuizValues((current) => {
+          return {
+            ...current,
+            questions: questionsList,
+          }
+        })
+      }
+
       setQuestionsCreation(false)
     }
   }
@@ -206,9 +220,17 @@ export function QuestionCreation() {
     },
   }));
 
+  const [questionToEdit, setQuestionToEdit] = useState(undefined)
+  const [questionToEditIndex, setQuestionToEditIndex] = useState(undefined)
+  const editQuestion = (questionIndex) => {
+    setQuestionToEdit(quizValues.questions[questionIndex])
+    setQuestionToEditIndex(questionIndex)
+    setQuestionsCreation(true)
+  }
+
   const renderPage = () => {
     if(questionsCreation){
-      return (<CreateQuestionPage cancelQuestion={() => {setQuestionsCreation(false)}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
+      return (<CreateQuestionPage questionToEdit={questionToEdit} questionToEditIndex={questionToEditIndex} cancelQuestion={() => {setQuestionsCreation(false)}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
     }else if(autoQuestion === true){
       return (<AutoQuestion cancelCreation={() => {setAutoQuestion(false)}} createQuestion={createAutoQuestion}/>)
     }else{
@@ -276,14 +298,14 @@ export function QuestionCreation() {
           <h2 className="font-semibold text-xl">Questões ({quizValues.questions.length})</h2>
           <div className="flex flex-col gap-3">
             <div className="flex flex-col md:flex-row mt-3 mb-4 justify-between gap-3">
-              <div onClick={() => {setQuestionsCreation(true)}} className="p-4 flex gap-3 items-center cursor-pointer w-full border-[0.7px] text-zinc-400 justify-center border-zinc-300 rounded-lg hover:border-zinc-500 hover:text-zinc-900 transition-all">
+              <button onClick={() => {setQuestionsCreation(true)}} className="p-4 flex gap-3 items-center cursor-pointer w-full border-[0.7px] text-zinc-400 justify-center border-zinc-300 rounded-lg hover:border-zinc-500 hover:text-zinc-900 transition-all">
                 <Plus size={22} weight="regular"/>
                 Adicionar Manualmente
-              </div>
-              <div onClick={() => {setAutoQuestion(true)}} className="w-full gap-3 p-4 flex items-center justify-center border-zinc-300 border-[0.7px] rounded-lg cursor-pointer hover:border-zinc-500 text-zinc-400 hover:text-zinc-900 transition-all">
+              </button>
+              <button onClick={() => {setAutoQuestion(true)}} className="w-full gap-3 p-4 flex items-center justify-center border-zinc-300 border-[0.7px] rounded-lg cursor-pointer hover:border-zinc-500 text-zinc-400 hover:text-zinc-900 transition-all">
                 <Sparkle size={22} weight="regular"/>
                 Organização Automática
-              </div>
+              </button>
             </div>
 
             {
@@ -298,12 +320,16 @@ export function QuestionCreation() {
                       </div>
                     </div>
                     <div className="flex">
-                      <div onClick={() => {alert("Desculpe, mas a edição de questão está em desenvolvimento.")}} className="mr-4 text-zinc-500 transition-all cursor-not-allowed p-2">
-                        <Pencil size={22} weight="regular" alt={"Editar questão " + index + 1}/>
-                      </div>
-                      <div onClick={() => {removeQuestion(index)}} className="mr-4 text-zinc-500 hover:text-zinc-700 transition-all cursor-pointer p-2">
-                        <TrashSimple size={22} weight="regular" alt={"Remover questão " + index}/>
-                      </div>
+                      <ButtonTooltip title="Editar questão">
+                        <button onClick={() => {editQuestion(index)}} className="mr-4 text-zinc-500 transition-all hover:text-zinc-700 cursor-pointer p-2">
+                          <Pencil size={22} weight="regular" alt={"Editar questão "}/>
+                        </button>
+                      </ButtonTooltip>
+                      <ButtonTooltip title="Remover questão">
+                        <button onClick={() => {removeQuestion(index)}} className="mr-4 text-zinc-500 hover:text-red-500 transition-all cursor-pointer p-2">
+                          <TrashSimple size={22} weight="regular" alt={"Remover questão "}/>
+                        </button>
+                      </ButtonTooltip>
                       
                     </div>
                   </div>

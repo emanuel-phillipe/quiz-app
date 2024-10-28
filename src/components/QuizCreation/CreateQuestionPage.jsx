@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { QuizContext } from "../../context/quiz";
 import { isMobile } from "react-device-detect";
 
-export function CreateQuestionPage({saveQuestion, autoQuestion, cancelQuestion}) {
+export function CreateQuestionPage({saveQuestion, questionToEditIndex, questionToEdit, autoQuestion, cancelQuestion}) {
   const placeholder =
     "O que caracteriza o movimento modernista no Brasil?";
 
@@ -18,10 +18,16 @@ export function CreateQuestionPage({saveQuestion, autoQuestion, cancelQuestion})
   const [currentOption, setCurrentOption] = useState("");
   const [ableToSave, setAbleToSave] = useState(false)
   const [autoQuestionRegistered, setAutoQuestionRegistered] = useState(false)
+  const [editQuestionRegistered, setEditQuestionRegistered] = useState(false)
 
   if(autoQuestion && !autoQuestionRegistered){
     setQuestionInfo({header: autoQuestion.header, options: autoQuestion.options, answer: autoQuestion.answer, descriptions: [], latex: false})
     setAutoQuestionRegistered(true)
+  }
+
+  if(questionToEdit && !editQuestionRegistered){
+    setQuestionInfo({header: questionToEdit.header, options: questionToEdit.options, answer: questionToEdit.answer, descriptions: questionToEdit.descriptions, latex: questionToEdit.latex})
+    setEditQuestionRegistered(true)
   }
 
   useEffect(() => {
