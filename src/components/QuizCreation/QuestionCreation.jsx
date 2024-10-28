@@ -1,15 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { QuizContext } from "../../context/quiz";
-import { Pencil, Plus, PlusMinus, Sparkle, Trash, TrashSimple } from "@phosphor-icons/react";
+import { Pencil, Plus, Sparkle, TrashSimple } from "@phosphor-icons/react";
 import { CreateQuestionPage } from "./CreateQuestionPage";
 import AutoQuestion from "./AutoQuestion";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import LoadingScreen from "../LoadingScreen";
-import useDebounce from "../../lib/useDebounce";
-import UserList from "./UserList";
-import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tooltip, tooltipClasses } from "@mui/material";
+import { styled, Tooltip, tooltipClasses } from "@mui/material";
 
 // {
 //   question: "Qual é a principal diferença entre os conceitos de fotossíntese e respiração celular?",
@@ -300,8 +298,8 @@ export function QuestionCreation() {
                       </div>
                     </div>
                     <div className="flex">
-                      <div onClick={() => {removeQuestion(index)}} className="mr-4 text-zinc-500 hover:text-zinc-700 transition-all cursor-pointer p-2">
-                        <Pencil size={22} weight="regular" alt={"Editar questão " + index}/>
+                      <div onClick={() => {alert("Desculpe, mas a edição de questão está em desenvolvimento.")}} className="mr-4 text-zinc-500 transition-all cursor-not-allowed p-2">
+                        <Pencil size={22} weight="regular" alt={"Editar questão " + index + 1}/>
                       </div>
                       <div onClick={() => {removeQuestion(index)}} className="mr-4 text-zinc-500 hover:text-zinc-700 transition-all cursor-pointer p-2">
                         <TrashSimple size={22} weight="regular" alt={"Remover questão " + index}/>
