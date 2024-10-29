@@ -77,6 +77,9 @@ export function QuestionCreation() {
       setQuestionsCreation(false)
     }else{
 
+      setQuestionToEdit(undefined)
+      setQuestionToEditIndex(undefined)
+
       if(!questionToEdit){
         setQuizValues((current) => {
           return {
@@ -230,7 +233,7 @@ export function QuestionCreation() {
 
   const renderPage = () => {
     if(questionsCreation){
-      return (<CreateQuestionPage questionToEdit={questionToEdit} questionToEditIndex={questionToEditIndex} cancelQuestion={() => {setQuestionsCreation(false)}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
+      return (<CreateQuestionPage questionToEdit={questionToEdit} questionToEditIndex={questionToEditIndex} cancelQuestion={() => {setQuestionsCreation(false); setQuestionToEdit(undefined); setQuestionToEditIndex(undefined)}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
     }else if(autoQuestion === true){
       return (<AutoQuestion cancelCreation={() => {setAutoQuestion(false)}} createQuestion={createAutoQuestion}/>)
     }else{
