@@ -152,7 +152,7 @@ export function CreateQuestionPage({saveQuestion, questionToEditIndex, questionT
           })
         }
         value={questionInfo.header}
-        className="w-full text-justify outline-none"
+        className="w-full text-justify h-[15rem] outline-none"
         rows={3}
         placeholder={placeholder}
       ></textarea>
