@@ -151,8 +151,9 @@ function QuizSelectionPopup({quizSelected, leavePopup, index}) {
   const [quizState, dispatch] = useContext(QuizContext)
   const creators = quizSelected.creators.sort()
 
-  console.log(creators);
-  
+  const findName = () => {
+    return creators.some(name => name.toLowerCase().includes(quizState.userInfo.smallName.toLowerCase()));
+  }  
 
   return (
     <div onClick={() => {leavePopup()}} className="fixed backdrop-blur-sm flex justify-center items-center w-full h-screen top-0 left-0 z-20 bg-zinc-800/12">
@@ -171,7 +172,7 @@ function QuizSelectionPopup({quizSelected, leavePopup, index}) {
         </div>
 
         <button onClick={() => {dispatch({type: "SELECT_QUESTION_AND_SORT", payload: {index}})}} className="w-full py-2 bg-zinc-100 border-[0.7px] border-zinc-200 shadow-sm rounded-md mt-5 font-semibold hover:border-zinc-400 transition-all hover:bg-zinc-200">Jogar</button>
-        {quizState.userInfo.id === quizSelected.creatorId || quizState.userInfo.type === "ADMIN" ? <button onClick={() => {dispatch({type: "QUIZ_CREATION", payload: {quiz: quizSelected}})}} className="w-full py-2 bg-zinc-100 border-[0.7px] border-zinc-200 shadow-sm rounded-md mt-5 font-semibold hover:border-zinc-400 transition-all hover:bg-zinc-200">Editar</button> : ""}
+        {quizState.userInfo.id === quizSelected.creatorId || quizState.userInfo.type === "ADMIN" || findName() ? <button onClick={() => {dispatch({type: "QUIZ_CREATION", payload: {quiz: quizSelected}})}} className="w-full py-2 bg-zinc-100 border-[0.7px] border-zinc-200 shadow-sm rounded-md mt-5 font-semibold hover:border-zinc-400 transition-all hover:bg-zinc-200">Editar</button> : ""}
       </div>
     </div>
   )
