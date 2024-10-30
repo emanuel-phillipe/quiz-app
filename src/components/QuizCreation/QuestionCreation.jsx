@@ -316,7 +316,7 @@ export function QuestionCreation() {
                 return (
                   <div key={index} className="flex justify-between p-4 border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all px-4 rounded-lg items-center">
                     <div className="flex">
-                      <p className="text-[1.1rem] pl-1 font-bold">{index <= 9 ? `0${index+1}` : `${index+1}`}</p>
+                      <p className="text-[1.1rem] pl-1 font-bold">{index < 9 ? `0${index+1}` : `${index+1}`}</p>
                       <div className="flex flex-col pl-3">
                         <p className="font-normal text-zinc-800">{truncate(current.header, 50)}</p>
                         <p className="text-[0.9rem] text-zinc-500">{current.options.length} opções</p>
