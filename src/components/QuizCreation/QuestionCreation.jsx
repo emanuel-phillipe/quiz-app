@@ -120,7 +120,9 @@ export function QuestionCreation() {
       return index !== indexToRemove
     })
 
-    socket.emit("question_remotion", {questions: questionsFiltered, quizId: quizState.quizSelectedToEdit.id, responsibleUser: quizState.userInfo.smallName})
+    if(quizState.quizSelectedToEdit){
+      socket.emit("question_remotion", {questions: questionsFiltered, quizId: quizState.quizSelectedToEdit.id, responsibleUser: quizState.userInfo.smallName})
+    }
 
     setQuizValues((current) => {
       return {...current, questions: questionsFiltered}
@@ -246,11 +248,13 @@ export function QuestionCreation() {
 
   const createNewQuestion = () => {
 
-    socket.emit("question_creation", {
+    if(quizValues.quizSelectedToEdit){
+      socket.emit("question_creation", {
       questionNumber: quizValues.questions.length,
       responsibleUser: quizState.userInfo.smallName,
       quizId: quizState.quizSelectedToEdit.id
     })
+    }
 
     setQuestionsCreation(true)
   }
@@ -279,10 +283,12 @@ export function QuestionCreation() {
 
   const cancelQuestionCreation = () => {
 
-    socket.emit("cancel_question_creation", {
-      responsibleUser: quizState.userInfo.smallName,
-      quizId: quizState.quizSelectedToEdit.id
-    })
+    if(quizState.quizSelectedToEdit){
+      socket.emit("cancel_question_creation", {
+        responsibleUser: quizState.userInfo.smallName,
+        quizId: quizState.quizSelectedToEdit.id
+      })
+    }
 
     setQuestionsCreation(false); 
     setQuestionToEdit(undefined); 
