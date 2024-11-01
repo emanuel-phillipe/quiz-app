@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { QuizContext } from "../../context/quiz";
 import { isMobile } from "react-device-detect";
+import { io } from "socket.io-client";
 
 export function CreateQuestionPage({saveQuestion, questionToEditIndex, questionToEdit, autoQuestion, cancelQuestion}) {
   const placeholder =

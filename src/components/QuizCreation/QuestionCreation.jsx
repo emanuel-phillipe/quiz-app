@@ -8,6 +8,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import LoadingScreen from "../LoadingScreen";
 import { styled, Tooltip, tooltipClasses } from "@mui/material";
+import { io } from "socket.io-client";
 
 // {
 //   question: "Qual é a principal diferença entre os conceitos de fotossíntese e respiração celular?",
@@ -17,6 +18,7 @@ import { styled, Tooltip, tooltipClasses } from "@mui/material";
 //   latex: false
 // },
 
+const socket = io.connect("http://localhost:3000")
 export function QuestionCreation() {
 
   const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
@@ -32,6 +34,7 @@ export function QuestionCreation() {
 
   const [questionsCreation, setQuestionsCreation] = useState(false)
   const [autoQuestion, setAutoQuestion] = useState(false)
+  const [questionsBeingCreated, setQuestionsBeingCreated] = useState([])
 
   const [isQuizToEditSet,setIsQuizToEditSet] = useState(false)
   useEffect(() => {
@@ -39,7 +42,10 @@ export function QuestionCreation() {
       if(quizState.quizSelectedToEdit){
 
         const quizToEdit = quizState.quizSelectedToEdit
-      
+        console.log(quizToEdit);
+        
+        socket.emit("quiz_editing_room", {quizId: quizToEdit.id})
+
         setIsQuizToEditSet(true)
         setQuizValues({
           title: quizToEdit.title,
@@ -81,6 +87,9 @@ export function QuestionCreation() {
       setQuestionToEditIndex(undefined)
 
       if(!questionToEdit){
+
+        socket.emit("question_created", {questions: [...quizValues.questions, {...question, quizId: quizState.quizSelectedToEdit.id}], quizId: quizState.quizSelectedToEdit.id, responsibleUser: quizState.userInfo.smallName})
+
         setQuizValues((current) => {
           return {
             ...current,
@@ -91,6 +100,8 @@ export function QuestionCreation() {
         let questionsList = quizValues.questions
 
         questionsList[questionToEditIndex] = {...question, quizId: quizState.quizSelectedToEdit.id}
+
+        socket.emit("question_created", {questions: questionsList, quizId: quizState.quizSelectedToEdit.id, responsibleUser: quizState.userInfo.smallName})
 
         setQuizValues((current) => {
           return {
@@ -108,6 +119,8 @@ export function QuestionCreation() {
     var questionsFiltered = quizValues.questions.filter((current, index) => {
       return index !== indexToRemove
     })
+
+    socket.emit("question_remotion", {questions: questionsFiltered, quizId: quizState.quizSelectedToEdit.id, responsibleUser: quizState.userInfo.smallName})
 
     setQuizValues((current) => {
       return {...current, questions: questionsFiltered}
@@ -231,9 +244,54 @@ export function QuestionCreation() {
     setQuestionsCreation(true)
   }
 
+  const createNewQuestion = () => {
+
+    socket.emit("question_creation", {
+      questionNumber: quizValues.questions.length,
+      responsibleUser: quizState.userInfo.smallName,
+      quizId: quizState.quizSelectedToEdit.id
+    })
+
+    setQuestionsCreation(true)
+  }
+
+  useEffect(() => {
+    socket.on("new_question", (data) => {
+      setQuestionsBeingCreated((current) => {return [...current, {questionNumber: data.questionNumber, responsibleUser: data.responsibleUser}]})
+    })
+
+    socket.on("cancel_question", (data) => {
+      let questionsToMaintain = questionsBeingCreated.filter((question) => {
+        question.responsibleUser != data.responsibleUser
+      })
+
+      setQuestionsBeingCreated(questionsToMaintain)
+    })
+
+    socket.on("set_created_question", (data) => {
+      setQuizValues((current) => {return {...current, questions: data.questions}})
+    })
+
+    socket.on("remove_question", (data) => {
+      setQuizValues((current) => {return {...current, questions: data.questions}})
+    })
+  }, [socket])
+
+  const cancelQuestionCreation = () => {
+
+    socket.emit("cancel_question_creation", {
+      responsibleUser: quizState.userInfo.smallName,
+      quizId: quizState.quizSelectedToEdit.id
+    })
+
+    setQuestionsCreation(false); 
+    setQuestionToEdit(undefined); 
+    setQuestionToEditIndex(undefined)
+  }
+
   const renderPage = () => {
     if(questionsCreation){
-      return (<CreateQuestionPage questionToEdit={questionToEdit} questionToEditIndex={questionToEditIndex} cancelQuestion={() => {setQuestionsCreation(false); setQuestionToEdit(undefined); setQuestionToEditIndex(undefined)}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
+      return (<CreateQuestionPage questionToEdit={questionToEdit} questionToEditIndex={questionToEditIndex} cancelQuestion={() => {cancelQuestionCreation()}} autoQuestion={autoQuestion} saveQuestion={saveQuestion}/>)
     }else if(autoQuestion === true){
       return (<AutoQuestion cancelCreation={() => {setAutoQuestion(false)}} createQuestion={createAutoQuestion}/>)
     }else{
@@ -298,10 +356,10 @@ export function QuestionCreation() {
         <hr className="mt-5" />
   
         <div className="mt-5 flex gap-2 flex-col">
-          <h2 className="font-semibold text-xl">Questões ({quizValues.questions.length})</h2>
+          <h2 className="font-semibold text-xl">Questões ({quizValues.questions.length + questionsBeingCreated.length})</h2>
           <div className="flex flex-col gap-3">
             <div className="flex flex-col md:flex-row mt-3 mb-4 justify-between gap-3">
-              <button onClick={() => {setQuestionsCreation(true)}} className="p-4 flex gap-3 items-center cursor-pointer w-full border-[0.7px] text-zinc-400 justify-center border-zinc-300 rounded-lg hover:border-zinc-500 hover:text-zinc-900 transition-all">
+              <button onClick={() => {createNewQuestion()}} className="p-4 flex gap-3 items-center cursor-pointer w-full border-[0.7px] text-zinc-400 justify-center border-zinc-300 rounded-lg hover:border-zinc-500 hover:text-zinc-900 transition-all">
                 <Plus size={22} weight="regular"/>
                 Adicionar Manualmente
               </button>
@@ -338,6 +396,20 @@ export function QuestionCreation() {
                   </div>
                 )
               })) : ""
+            }
+
+            {
+              questionsBeingCreated.map((question, index) => {
+                return (<div key={index} className="flex justify-between p-4 border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all px-4 rounded-lg items-center">
+                  <div className="flex">
+                    <p className="text-[1.1rem] pl-1 font-bold">{question.questionNumber+ index < 9 ? `0${question.questionNumber + index}` : `${question.questionNumber + index}`}</p>
+                    <div className="flex flex-col pl-3">
+                      <p className="font-normal text-zinc-800">Em processo de criação...</p>
+                      <p className="text-[0.9rem] text-zinc-500">{question.responsibleUser} está criando</p>
+                    </div>
+                  </div>
+                </div>)
+              })
             }
 
           </div>
