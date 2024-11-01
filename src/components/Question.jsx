@@ -3,10 +3,7 @@ import { QuizContext } from "../context/quiz"
 import Option from "./Option"
 import Latex from "react-latex"
 
-export const Question = () => {
-
-  console.log("Oiio");
-  
+export const Question = () => {  
 
   const [currentSelection, setCurrentSelection] = useState({
     option: "",
@@ -143,7 +140,11 @@ export const Question = () => {
         <div className="mt-3">
           {currentQuestion.options.map((option, index) => { // COLOCA A COR DE ACORDO COM A SELEÇÃO
             const isSelected = option === currentSelection.option;
-            const optionStyles = isSelected ? "bg-zinc-200 text-zinc-800" : "";
+            let optionStyles = isSelected ? "bg-zinc-200 text-zinc-800" : "";
+
+            if(index === currentQuestion.options.length - 1){
+              optionStyles = optionStyles + "mb-[2rem]"
+            }
 
             return (
               <Option

@@ -23,6 +23,20 @@ const quizReducer = (state, action) => {
       var userName = action.payload.userInfo.fullName
       var splitedName = userName.split(" ")
 
+      if(splitedName.length === 1){
+        return {
+          ...state,
+          userInfo: {...action.payload.userInfo, smallName: splitedName[0]}
+        }
+      }
+
+      if(splitedName[1].toUpperCase() === "DE" || splitedName[1].toUpperCase() === "DOS" || splitedName[1].toUpperCase() === "DO"){
+        return {
+          ...state,
+          userInfo: {...action.payload.userInfo, smallName: splitedName[0] +  " " + splitedName[2]}
+        }
+      }
+
       return {
         ...state,
         userInfo: {...action.payload.userInfo, smallName: splitedName[0] +  " " + splitedName[1]}
