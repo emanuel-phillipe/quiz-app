@@ -18,7 +18,7 @@ import { io } from "socket.io-client";
 //   latex: false
 // },
 
-const socket = io.connect("http://localhost:3000")
+const socket = io.connect(import.meta.env.VITE_API)
 export function QuestionCreation() {
 
   const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
