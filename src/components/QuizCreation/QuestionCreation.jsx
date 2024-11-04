@@ -158,8 +158,6 @@ export function QuestionCreation() {
       const { questions: _, ...newQuiz } = quizValues;
       const requestBody = {...newQuiz, "questions": questionsWithoutId, "quizId": quizState.quizSelectedToEdit.id}
 
-      console.log(requestBody);
-
       const editingQuizResponse = await axios.put(import.meta.env.VITE_API + "/quiz/update", requestBody, {
         headers: {"Authorization": "Bearer " + cookies.userToken}
       }).catch((err) => {
@@ -248,7 +246,6 @@ export function QuestionCreation() {
 
   const createNewQuestion = () => {
 
-    console.log(quizValues.quizSelectedToEdit);
     if(isQuizToEditSet){
       socket.emit("question_creation", {
       questionNumber: quizValues.questions.length,
@@ -262,7 +259,6 @@ export function QuestionCreation() {
 
   useEffect(() => {
     socket.on("new_question", (data) => {
-      console.log("Olá, mundo!");
       setQuestionsBeingCreated((current) => {return [...current, {questionNumber: data.questionNumber, responsibleUser: data.responsibleUser}]})
     })
 
