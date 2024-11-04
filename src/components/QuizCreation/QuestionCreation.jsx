@@ -248,7 +248,8 @@ export function QuestionCreation() {
 
   const createNewQuestion = () => {
 
-    if(quizValues.quizSelectedToEdit){
+    console.log(quizValues.quizSelectedToEdit);
+    if(isQuizToEditSet){
       socket.emit("question_creation", {
       questionNumber: quizValues.questions.length,
       responsibleUser: quizState.userInfo.smallName,
@@ -261,6 +262,7 @@ export function QuestionCreation() {
 
   useEffect(() => {
     socket.on("new_question", (data) => {
+      console.log("Olá, mundo!");
       setQuestionsBeingCreated((current) => {return [...current, {questionNumber: data.questionNumber, responsibleUser: data.responsibleUser}]})
     })
 
@@ -378,7 +380,7 @@ export function QuestionCreation() {
             {
               quizValues.questions ? (quizValues.questions.map((current, index) => {
                 return (
-                  <div key={index} className={`flex justify-between ${index === quizValues.questions.length - 1 && 'mb-[7rem]'} p-4 border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all px-4 rounded-lg items-center`}>
+                  <div key={index} className={`flex justify-between ${index === quizValues.questions.length - 1 && questionsBeingCreated.length === 0 && 'mb-[7rem]'} p-4 border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all px-4 rounded-lg items-center`}>
                     <div className="flex">
                       <p className="text-[1.1rem] pl-1 font-bold">{index < 9 ? `0${index+1}` : `${index+1}`}</p>
                       <div className="flex flex-col pl-3">
