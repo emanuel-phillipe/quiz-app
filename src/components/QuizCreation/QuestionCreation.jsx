@@ -42,7 +42,6 @@ export function QuestionCreation() {
       if(quizState.quizSelectedToEdit){
 
         const quizToEdit = quizState.quizSelectedToEdit
-        console.log(quizToEdit);
         
         socket.emit("quiz_editing_room", {quizId: quizToEdit.id})
 
@@ -314,7 +313,7 @@ export function QuestionCreation() {
 
           <div className="flex flex-col ml-3 md:flex-row gap-3 h-max">
             {
-              isMobile ? "" : <button className={buttonStyle} onClick={() => createQuiz()}>Criar</button>
+              isMobile ? "" : <button className={buttonStyle} onClick={() => createQuiz()}>{isQuizToEditSet ? 'Salvar' : 'Criar'}</button>
             }
             {quizState.quizSelectedToEdit && <button onClick={() => {setDeleteQuiz(true)}} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-red-300 hover:text-red-500 hover:border-red-500 transition-all">Deletar</button>}
             {!isMobile && <button onClick={() => dispatch({type: "HOME_PAGE"})} className="p-2 px-4 rounded-lg font-medium border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all">Cancelar</button>}
@@ -406,7 +405,7 @@ export function QuestionCreation() {
               questionsBeingCreated.map((question, index) => {
                 return (<div key={index} className="flex justify-between p-4 border-[0.7px] border-zinc-300 hover:border-zinc-500 transition-all px-4 rounded-lg items-center">
                   <div className="flex">
-                    <p className="text-[1.1rem] pl-1 font-bold">{question.questionNumber+ index < 9 ? `0${question.questionNumber + index}` : `${question.questionNumber + index}`}</p>
+                    <p className="text-[1.1rem] pl-1 font-bold">{quizValues.questions.length + questionsBeingCreated.length < 9 ? `0${quizValues.questions.length + questionsBeingCreated.length}` : quizValues.questions.length + questionsBeingCreated.length}</p>
                     <div className="flex flex-col pl-3">
                       <p className="font-normal text-zinc-800">Em processo de criação...</p>
                       <p className="text-[0.9rem] text-zinc-500">{question.responsibleUser} está criando</p>

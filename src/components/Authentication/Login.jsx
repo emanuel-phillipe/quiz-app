@@ -30,11 +30,11 @@ function Login({handlePageChanging}) {
     setLoading(true)
     
     const userToken = await axios.post(import.meta.env.VITE_API+"/auth/login", {"email": inputsValues.email, "password": inputsValues.password.content}).catch((err) => {
-      if(err.status === 404) {setPossibleErrors((current) => {return {...current, incorrectEmail: true}}); return;}
-      else if(err.status === 401) {setPossibleErrors((current) => {return {...current, incorrectPassword: true}}); return;}
+      if(err.status === 404) {setPossibleErrors((current) => {return {...current, incorrectEmail: true}}); setLoading(false); return;}
+      else if(err.status === 401) {setPossibleErrors((current) => {return {...current, incorrectPassword: true}}); setLoading(false); return;}
     })
 
-    setLoading(true)
+    setLoading(false)
 
     setCookie("userToken", userToken.data.info, {path: "/"})
     dispatch({type: "HOME_PAGE"})

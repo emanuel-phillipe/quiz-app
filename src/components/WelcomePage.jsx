@@ -30,10 +30,10 @@ export function WelcomePage(){
 
     const getUserInfo = async () => {
       const response = await axios.get(import.meta.env.VITE_API + "/user", {headers: {Authorization: `Bearer ${cookies.userToken}`}}).catch((err) => {
-        removeCookie()
+        removeCookie("userToken")        
         dispatch({type: "USER_AUTH"})
         return false
-      })
+      })      
 
       if(response){
         dispatch({type: "SET_USER_INFO", payload: {userInfo: response.data}})
