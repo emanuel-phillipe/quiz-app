@@ -1,0 +1,35 @@
+{
+  "name": "quiz-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx watch src/server.ts",
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Emanuel Phillipe",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^22.1.0",
+    "pre-commit": "^1.2.2",
+    "prisma": "^5.17.0",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@fastify/jwt": "^9.0.1",
+    "@fastify/websocket": "^11.0.1",
+    "@prisma/client": "^5.17.0",
+    "bcrypt": "^5.1.1",
+    "fastify": "^2.11.0",
+    "socket.io": "^4.8.1",
+    "zod": "^3.23.8"
+  }
+}

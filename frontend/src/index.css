@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  font-family: "Outfit", sans-serif;
+}
+
+.katex .mathnormal, .katex .mathrm, .katex .custom-Regular, .katex .amsrm {
+	font-family: "Outfit";
+}
